@@ -1,0 +1,6 @@
+name = "workflows-scim-relay"
+main = "src/index.js"
+compatibility_date = "2023-06-14"
+
+[vars]
+WORKFLOW_URL = "https://example.workflows.example.com/api/flo/example/invoke"
