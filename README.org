@@ -10,8 +10,8 @@ The software in this project will enable you to configure a SCIM 2.0
 client to any Okta org, allowing you to connect an external user
 source to Okta via SCIM 2.0.
 
-That said, please be aware of the following strengths and weaknesses
-in this project:
+That said, please be aware of the following strengths, weaknesses, and
+known gaps in this project:
 
 *** Strengths
 
@@ -22,7 +22,13 @@ in this project:
 
 - Not tested in production yet
 - Most requests take over 1000 milliseconds to complete
+
+*** Known gaps
+
 - Only tested against Okta's SCIM 2.0 client implementation
+- Does not yet support importing more than 200 groups
+- Only implements header based authentication
+- Only tested to support the =eq= filter on =/Users=
 
 ** IMPORTANT
 
