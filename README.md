@@ -197,8 +197,8 @@ Okta Org via SCIM:
 Thanks to the following people for their explicit and implict help in
 making this project a reality:
 
--   AB for proposing the idea initally
--   MNC for early feedback and suggestions
+-   Aaron Berman for proposing the idea initally
+-   Melisa Chaidez for early feedback and suggestions
 -   BZ for early feedback
 -   BG for ongoing encouragement and assistance
 -   MK for early gut checks
