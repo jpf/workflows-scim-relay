@@ -204,5 +204,5 @@ making this project a reality:
 -   Max Katz for early gut checks
 -   RN for writing up the the results of a similar project, which
     validated my approach
--   NC for an early review and feedback
+-   Nate Callaghan for an early review and feedback
 
