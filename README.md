@@ -201,7 +201,7 @@ making this project a reality:
 -   Melisa Chaidez for early feedback and suggestions
 -   BZ for early feedback
 -   Brent Garlow for ongoing encouragement and assistance
--   MK for early gut checks
+-   Max Katz for early gut checks
 -   RN for writing up the the results of a similar project, which
     validated my approach
 -   NC for an early review and feedback
