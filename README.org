@@ -212,7 +212,7 @@ making this project a reality:
 - Aaron Berman for proposing the idea initally
 - Melisa Chaidez for early feedback and suggestions
 - BZ for early feedback
-- BG for ongoing encouragement and assistance
+- Brent Garlow for ongoing encouragement and assistance
 - MK for early gut checks
 - RN for writing up the the results of a similar project, which
   validated my approach
