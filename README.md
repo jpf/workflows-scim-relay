@@ -209,7 +209,7 @@ making this project a reality:
 -   BZ for early feedback
 -   Brent Garlow for ongoing encouragement and assistance
 -   Max Katz for early gut checks
--   RN for writing up the the results of a similar project, which
-    validated my approach
+-   Raj Nadimpalli for writing up the the results of a similar project,
+    which validated my approach
 -   Nate Callaghan for an early review and feedback
 
