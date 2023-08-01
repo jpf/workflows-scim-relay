@@ -217,7 +217,7 @@ making this project a reality:
 
 - Aaron Berman for proposing the idea initally
 - Melisa Chaidez for early feedback and suggestions
-- BZ for early feedback
+- Brian Zuzga for early feedback
 - Brent Garlow for ongoing encouragement and assistance
 - Max Katz for early gut checks
 - Raj Nadimpalli for writing up the the results of a similar project,
