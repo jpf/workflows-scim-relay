@@ -1,3 +1,4 @@
+# M-x org-md-export-to-markdown
 #+OPTIONS: toc:nil        (no default TOC at all)
 * Workflows SCIM Relay
 
@@ -202,14 +203,256 @@ Okta Org via SCIM:
 
 
 
-* Detailed setup instructions                                      :noexport:
+* Detailed setup instructions
 
 In-depth instructions for setting up the Workflows SCIM Relay are below:
 
-** Setting up the "target" Okta Org
+** Clone this repository to your machine
+- On macOS you can do this from a terminal by typing this command into
+  your terminal:
+  #+begin_src bash
+    git clone https://github.com/jpf/workflows-scim-relay.git
+  #+end_src
+** Setting up the "target" Okta org
+The instructions below assume that you're starting from the Admin
+Dashboard in your Okta org, do this by following the steps below:
+- Log in as an Admin user on your target org.
+- Enter the Admin Dashboard by clicking on the "Admin" button in the upper left.
+*** Add the "externalId" attribute to Universal Directory
+The Workflows SCIM Proxy requires a custom attribute in Universal
+Directory called "externalId" set it up by following the steps below:
+- Open the Admin Dashboard
+- In the left-hand navigation, click on "Directory" to expand the
+  menu.
+- Click "Profile Editor".
+- Find the "User (default)" user type and click on it.
+- You should now see a "Profile Editor" screen.
+- Click on the "+ Add Attribute" button in the "Attributes" section.
+- Configure the Attribute as follows:
+  - Data type: string
+  - Display name: External ID
+  - Variable name: =externalId=
+  - Description: SCIM External ID used by the Workflows SCIM Relay
+  - Leave all of the other settings at their defaults.
+  - Click on the blue "Save" button.
 *** Setting up the Workflows
-** Setting up the Cloudflare Proxy
-** Setting up the "source" Okta Org
+- Open the Admin Dashboard
+- In the left-hand navigation, click on "Workflow" to expand the menu.
+- Click the "Workflows console" link.
+- In the new window that opens, click "Flows" in the top menu bar.
+- In the left hand navigation, to the right of the word "Folders" find
+  the plus symbol that is in a circle and click it.
+- A "Create new folder" dialog should open, enter "SCIM" as the Folder
+  name and click the "Save" button.
+- Click on the newly created "SCIM" folder.
+- Click the "Actions" drop down menu on the right and select "Import".
+- Find the copy of this git repository that you cloned to your
+  machine, locate the "Workflows_SCIM_Relay.folder" file and then drag
+  it into the window that says "Drag and drop file here" or use the
+  "Choose file from computer" link to select the file.
+- You should now see that the SCIM folder has two sub-folders:
+  1. HTTP Methods
+  2. Utilities
+- Add the Okta connection to Workflows
+  After importing the SCIM Relay into Workflows, we need to add an
+  Okta connection for the SCIM Relay to use. Follow the steps below to
+  do that:
+  - Click the "Connections" link at the top of the Workflows page
+  - Click the "+ New Connection" button
+  - A "New Connection" window will open, type "okta" into the search
+    box and select the "Okta" icon.
+  - You should now see a screen with four text boxes:
+    1. Connection Nickname
+    2. Domain - without 'https://' or '-admin'. E.g. - 'atko.okta.com'
+    3. Client ID
+    4. Client Secret
+  - Click on the "Need Help?" link at the bottom of the window.
+  - Find the text that says "For additional information, see" and
+    click the "Guidance for Okta connector" link.
+  - Follow the instructions in the help window.
+    (The short version of these instructions is: Find the "Okta
+    Workflows OAuth" app in your Okta Admin Dashboard and copy the
+    "Client ID" and "Client secret" values from the "Sign On" tab into
+    Workflows)
+  - After following the instructions, click on the "Create" button.
+  - You should see some windows open, and a loading spinner. Then you
+    should see a new "Okta" application in your connectors.
+- Activate all of the flows that have been imported and connect
+  workflows to your Okta "target" tenant by following the steps below:
+  - Activate the flows the top-level SCIM folder by clicking the
+    "ON/OFF" toggle next to each of these flows to activate them:
+    1. SCIM Server
+    2. Periodically Update Resource Counts In the Metadata Table
+    3. SCIM Method Router
+  - Activate the flows in the "Utilities" folder:
+    - Start with the flow named "Update User and Group counts in the
+      Metadata Table". Click the "ON/OFF" toggle next to the flow
+      named "Update User and Group counts in the Metadata Table". This
+      will open the flow and you will be prompted to connect the Okta
+      app. Do this by clicking the "Choose Connection" button on the
+      first Okta card in the flow and selecting the Okta connection
+      that you set up above.
+    - Click the "Save" button for the flow
+    - Click on the "Flows" link at the top of the screen to return to
+      the Flows view, from the "Utilities" folder, click on the toggle
+      again for the flow named "Update User and Group counts in the
+      Metadata Table". It should be enabled now.
+  - Activate /most/ of the flows in the HTTP Methods folder
+    - Do the following for each flow /except/ for the "Template" and flow labeled "[NOT
+      IMPLEMENTED]"
+      - Click the "ON/OFF" toggle next to a flow.
+      - The flow will open. Find the first Okta card and click "Choose
+        Connection" at the top of the card.
+      - Select the Okta connection.
+      - Click the "Save" button for the flow.
+      - Click the blue "Save" button on the window that opens up.
+      - Click the "Flows" link at the top of the page.
+      - Click on the "ON/OFF" toggle again, it should activate
+      - Repeat for every flow in the folder except for the two
+        mentioned above
+- Secure the SCIM Server by creating a bearer token.
+  - Open the "SCIM" folder then click on the "SCIM Server" workflow to
+    open it.
+  - Find the first "Assign" card that contains a text box named
+    "authorization_header" containing the text "Bearer REPLACEME"
+  - Replace the text "REPLACEME" with a secret value.
+    A good value to use would be a UUID. Generate a UUID using your
+    favorite UUID generator. If you are using macOS you can use the
+    =uuidgen= command line utility.
+  - Make sure that the value of the "authorization_header" text box
+    contains only a single line
+  - Click the "Save" button and click the blue "Save" button again to confirm.
+- Get the public URL for the "SCIM Server" workflow.
+  - While looking at the contents of the "SCIM Server" flow from the
+    previous step, do the following:
+    - In the very first card, which is labeled "API Endpoint", find
+      and click on the small Endpoint Settings icon that looks like this: =</>=
+    - A window labeled "API Endpoint Settings" should open
+    - Copy the first URL in this window, it is labeled "Invoke URL",
+      it should look like this: =https://example.workflows.oktapreview.example/api/flo/01ab23cde45fghijklm6n789o0p12345/invoke=
+*** Verify your configuration
+- Click on the "Flows" link at the top of the Workflows menu
+- Click on the "SCIM" folder, then select the "Tables" tab
+- You should see two tables:
+  1. Offset to Cursor
+  2. Metadata
+- Open the "Metadata" table.
+  If the table has two entries, then you're all set. However, it's
+  unlikely that this happened unless it's been more than an hour since
+  you enabled the "Periodically Update Resource Counts In the Metadata
+  Table" flow.
+- If the "Metadata" table is empty, run the "Periodically Update
+  Resource Counts In the Metadata Table" flow as follows:
+  - Click "Flows" in the top of the Workflows screen.
+  - Click the "SCIM" folder, then click the "Flows" tab.
+  - Open the flow named "Periodically Update Resource Counts In the
+    Metadata Table".
+  - In the card named "Call Flow Async", find the small triangular
+    "play" button labeled "Test this card" and click on it.
+  - A window will open up, click the blue "Test" button.
+  - You should briefly see a spinner
+  - Click the grey "Close" button
+  - Follow the steps above to check the "Metadata" table again, you
+    should now see that it has two values in it.
+** Setting up the Cloudflare Workers Proxy
+*** Install the Cloudflare Workers Proxy
+- Create a Cloudflare account if you don't have one already: https://workers.cloudflare.com/
+- Install or Update the Wrangler command for Cloudflare using this
+  guide: https://developers.cloudflare.com/workers/wrangler/install-and-update/
+- Test Wrangler by running this command:
+  #+begin_src bash
+    wrangler whoami
+  #+end_src
+  You should see output with your Account Name and Account ID in it.
+- Open up the =wrangler.toml= file in your favorite text editor
+- Change the URL in the last line of the file to the Invoke URL for
+  the "SCIM Server" workflow
+- Save the file
+- Run this command in a terminal to verify that =wrangler.toml= has
+  been updated:
+  #+begin_src bash
+   git diff
+  #+end_src
+
+  You should see that the WORKFLOW_URL has been changed.
+- Run this command to deploy the Cloudflare Worker to your account:
+  #+begin_src bash
+    wrangler publish
+  #+end_src
+  You should see output that looks like this:
+  #+begin_example
+    Published workflows-scim-relay (3.51 sec)
+      https://workflows-scim-relay.example.workers.dev
+  #+end_example
+- Take note of the last URL in the output, this is the URL that you
+  will use to configure SCIM in your "source" Okta Org.
+*** Test the Cloudflare Workers Proxy
+Now it's time to test the Workflows SCIM Relay. We will do this by
+making SCIM API requests to the Cloudflare Workers endpoint.
+
+- Start by making sure that we get an "Unauthorized" message:
+#+begin_src bash
+curl 'https://workflows-scim-relay.example.workers.dev/scim/v2/Users'
+#+end_src
+
+This should return a JSON payload containing this key:
+
+#+begin_src json
+{"error":{"message":"Unauthorized"}
+#+end_src
+
+- Now make the same request, but with the bearer token you set up
+  above:
+  #+begin_src bash
+    curl -H 'Authorization: Bearer 0A12B345-C6D7-890E-1234-56FG7H8I9JK0' 'https://workflows-scim-relay.example.workers.dev/scim/v2/Users'
+  #+end_src
+
+  This should return a JSON payload that looks something like this:
+
+  #+begin_src json
+    {
+        "startIndex": 1,
+        "itemsPerPage": 1,
+        "schemas": [
+            "urn:ietf:params:scim:api:messages:2.0:ListResponse"
+        ],
+        "totalResults": 1,
+        "Resources": [
+            {
+            "id": "01a23bcd4efghiJKl5m6",
+            "externalId": "",
+            "location": "https://workflows-scim-relay.example.workers.dev/scim/v2/Users/01a23bcd4efghiJKl5m6",
+            "schemas": [
+                "urn:ietf:params:scim:schemas:core:2.0:User"
+            ],
+            "active": false,
+            "meta": {
+                "resourceType": "User",
+                "created": "2023-07-23T17:05:08.000Z",
+                "location": "",
+                "version": "",
+                "lastModified": "2023-08-09T18:30:51.000Z"
+            },
+            "emails": [
+                {
+                "value": "joel.franusic@example",
+                "primary": true,
+                "type": "work"
+            }
+            ],
+            "name": {
+                "givenName": "Joel",
+                "formatted": "Joel Franusic",
+                "familyName": "Franusic"
+            },
+            "userName": "joel.franusic@example",
+            "phoneNumbers": []
+        }
+        ]
+    }
+  #+end_src
+  If you get a result like the one above, then you know it's working!
+** Setting up the "source" Okta Org :noexport:
 * Thanks
 
 Thanks to the following people for their explicit and implict help in
