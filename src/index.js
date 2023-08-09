@@ -17,6 +17,7 @@ export default {
         // https://developer.mozilla.org/en-US/docs/Web/API/Request#instance_properties
         const requestJson = JSON.stringify({
             ...extractProperties(request),
+            // WARNING: This will fail with payloads that are too big
             body: await request.text(),
             headers: Object.fromEntries([...request.headers]),
             // https://developer.mozilla.org/en-US/docs/Web/API/URL#instance_properties
