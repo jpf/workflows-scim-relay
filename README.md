@@ -405,7 +405,8 @@ Directory called "externalId" set it up by following the steps below:
 ### Test the Cloudflare Workers Proxy
 
 Now it's time to test the Workflows SCIM Relay. We will do this by
-making SCIM API requests to the Cloudflare Workers endpoint.
+making SCIM API requests to the Cloudflare Workers endpoint that was
+set up in the step above.
 
 -   Start by making sure that we get an "Unauthorized" message:
 
@@ -413,7 +414,7 @@ making SCIM API requests to the Cloudflare Workers endpoint.
 
 This should return a JSON payload containing this key:
 
-    {"error":{"message":"Unauthorized"}
+    {"error":{"message":"Unauthorized"}}
 
 -   Now make the same request, but with the bearer token you set up
     above:

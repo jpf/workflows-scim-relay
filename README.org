@@ -54,7 +54,6 @@ risks associated with Your exercise of permissions under this License.
 You are solely reponsible for how you use this software. It is not
 supported by either Okta or Cloudflare.
 
-
 * Quickstart
 
 If you are already familiar with Cloudflare Functions and Okta
@@ -197,7 +196,6 @@ Okta Org via SCIM:
    would process the request, and return an appropriate response using HTTP.
 4. The Cloudflare proxy would take the response from the Okta Workflow
    and send it to =source.oktapreview.example=.
-
 
 
 
@@ -388,7 +386,8 @@ Directory called "externalId" set it up by following the steps below:
   will use to configure SCIM in your "source" Okta Org.
 *** Test the Cloudflare Workers Proxy
 Now it's time to test the Workflows SCIM Relay. We will do this by
-making SCIM API requests to the Cloudflare Workers endpoint.
+making SCIM API requests to the Cloudflare Workers endpoint that was
+set up in the step above.
 
 - Start by making sure that we get an "Unauthorized" message:
 #+begin_src bash
@@ -398,7 +397,7 @@ curl 'https://workflows-scim-relay.example.workers.dev/scim/v2/Users'
 This should return a JSON payload containing this key:
 
 #+begin_src json
-{"error":{"message":"Unauthorized"}
+{"error":{"message":"Unauthorized"}}
 #+end_src
 
 - Now make the same request, but with the bearer token you set up
@@ -453,6 +452,98 @@ This should return a JSON payload containing this key:
   #+end_src
   If you get a result like the one above, then you know it's working!
 ** Setting up the "source" Okta Org :noexport:
+In this final section, we will set up a /second/ Okta org to be the
+"source" org which will send outbound SCIM messages to the "target"
+Okta org which will handle those SCIM messages via the Workflows SCIM
+Relay that was configured in the steps above.
+
+To do this, we will need to things:
+1. The URL to the Cloudflare Worker that you previously set up.
+   It should look like this: =https://workflows-scim-relay.example.workers.dev=
+2. The bearer token that you configured in the Workflow.
+   If you used a UUID as a bearer token, it should look like this:
+   =0A12B345-C6D7-890E-1234-56FG7H8I9JK0=
+
+We will first set up an app to do SCIM provisioning, then assign a
+test user to that app.
+
+*** Create an app with SCIM provisioning
+Start by logging into your "source" Okta org as an administrator user.
+- Click on the "Admin" button in the end user dashboard
+- In the left hand navigation, click on "Applications" to expand the
+  Applications menu.
+- Click "Applications" in the Applications menu.
+- Click the blue "Create App Integration" button.
+- Select SAML 2.0
+- Give the app a name, perhaps "SAML via Workflows Relay"
+- Enter =https://example.com= in the "Single sign-on URL" and
+  "Audience URI" fields.
+- Scroll down and click the blue "Next" button.
+- Select the "I'm an Okta customer adding an internal app" and "This
+  is an internal app that we have created" options.
+- Click the blue "Finish" button.
+- Click on the "General" tab and click the "Edit" link.
+- In the Provisioning section, select "SCIM".
+- Scroll down and click the blue "Save" button.
+- Click on the "Provisioning" tab.
+- Click on the "Edit" link.
+- Enter the URL for the Cloudflare Worker with =/scim/v2= appended to
+  it into the "SCIM connector base URL" field.
+  It should look like this: ='https://workflows-scim-relay.example.workers.dev/scim/v2=
+- Enter =userName= into the "Unique identifier field for users" field.
+- In the "Supported provisioning actions" section, select the
+  following options:
+  - Import New Users and Profile Updates
+  - Push New Users
+  - Push Profile Updates
+- For "Authentication Mode" select "HTTP Header"
+  - A field named "Authorization" with a text box labeled "Bearer"
+    should appear. Enter the bearer token you configured above into
+    that field.
+- Click the "Test Connector Configuration" button.
+- A "Test Connector Configuration" window will open and ask you to wait.
+- If you see "Connector configured successfully", that means you've
+  configured everything successfully!
+- Click "Close" and then click the blue "Save" button.
+
+Import users from the target Okta org.
+- Click on the "Import" tab.
+- Click on the "Import Now" button.
+- Wait for the import to complete, it may take a minute or so.
+- Once the import completes, click on the "OK" button.
+
+Enable the provisioning features for the app:
+- Click on the "Provisioning" tab.
+- In the "Settings" menu, click on "To App"
+- Click the "Edit" link, then enable the following features:
+  - Create Users
+  - Update User Attributes
+  - Deactivate Users
+- Click the blue "Save" button.
+
+*** Create a test user and assign it to the SCIM provisioning app
+- In the left hand navigation, expand the "Directory" menu and click "People"
+- Click "Add Person"
+- Enter data for a test user into the window that opens.
+  - You can use "Fiddleford McGucket" as an example name with an email
+    address of "fiddleford@example.com" as the username.
+- Click the blue "Save" button.
+- Reload the page and find the user you just created, click on their name.
+- Click on the blue "Assign Applications" button.
+- Find the app that you just created above (maybe with the suggested
+  name of "SCIM via Workflows Relay") and click the "Assign" link next
+  to that app to assign the app to the user.
+- Scroll down and click "Save and Go Back"
+- Click the blue "Done" button.
+
+Once you assign the user to the app, the app will send a SCIM message
+to the Workflows relay, which should create the user in your "target"
+Okta org.
+
+Switch to you target Okta org and check for the user now.
+
+If you can see the user, then you know it worked!
+
 * Thanks
 
 Thanks to the following people for their explicit and implict help in
