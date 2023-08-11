@@ -64,7 +64,8 @@ If you are already familiar with Cloudflare Functions and Okta
 Workflows, here is a high level overview of what you'll need to do
 to get this project set up.
 
-*(in-depth setup instructions are in the works, open an issue the GitHub repository for this project with any questions)*
+In-depth instructions are below. Open an issue the
+GitHub repository for this project with any questions.
 
 
 ## Prerequisites
@@ -91,11 +92,11 @@ You will need the following:
         the "Add Attribute" button, then naming the variable `externalId`.
     -   Import the `Workflows_SCIM_Relay.folder` file into Okta
         Workflows. This will create a folder named "SCIM".
-    -   Turn on all of the flows in the "SCIM" folder as well as the
-        "HTTP Methods" and "Utilities" sub-folders.
     -   Configure the Okta connection to the "target" Okta Org in
         Workflows, so that the SCIM Server is able to access your target
         Okta org.
+    -   Turn on all of the flows in the "SCIM" folder as well as the
+        "HTTP Methods" and "Utilities" sub-folders.
     -   Open the "Periodically Update Resource Counts In the Metadata
         Table" Scheduled Flow and run it using the "Test" button. This
         will populate the counts of all users and groups, which is a key
@@ -103,6 +104,7 @@ You will need the following:
     -   Open the "SCIM Server" API Workflow (in the SCIM) folder, and
         copy the "Invoke URL" from the "API Endpoint Settings" of the
         "API Endpoint" card.
+        -   Change the bearer token to something unique.
 3.  Deploy the Cloudflare Functions code in this project to
     Cloudflare. This is a thin HTTP proxy that turns all HTTP requests
     into HTTP POST reqeusts.
@@ -117,6 +119,8 @@ You will need the following:
     -   Use the URL for the thin HTTP proxy to configure your SCIM 2.0
         client in your "source" Okta Org. Don't forget to append
         `/scim/v2/` to the URL.
+    -   Make sure to visit the "To App" part of the "Provisioning" tab
+        and enable the features like "Create Users" and "Update User Attributes".
 
 
 # How it works
@@ -147,9 +151,9 @@ Okta Org via SCIM:
     `workflows-scim-relay.example.workers.dev`. If the `curl` command
     were to make this request, it would look like this:
     
-        curl -H $AUTH "https://workflows-scim-relay.jpf.workers.dev/scim/v2/Users?startIndex=1&count=1"
+        curl -H $AUTH "https://workflows-scim-relay.example.workers.dev/scim/v2/Users?startIndex=1&count=1"
 2.  The Cloudflare Worker running at
-    `workflows-scim-relay.jpf.workers.dev` would convert this HTTP GET
+    `workflows-scim-relay.example.workers.dev` would convert this HTTP GET
     request into a single HTTP POST containing JSON that represets the
     GET request as a JSON payload that conforms to the [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request) and [URL](https://developer.mozilla.org/en-US/docs/Web/API/URL)
     objects of the "Fetch" Web API. Here is simplified version of what
