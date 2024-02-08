@@ -54,7 +54,7 @@ support** and **without warranty**:
 > appropriateness of using or redistributing the Work and assume any
 > risks associated with Your exercise of permissions under this License.
 
-You are solely reponsible for how you use this software. It is not
+You are solely responsible for how you use this software. It is not
 supported by either Okta or Cloudflare.
 
 
@@ -64,7 +64,7 @@ If you are already familiar with Cloudflare Functions and Okta
 Workflows, here is a high level overview of what you'll need to do
 to get this project set up.
 
-In-depth instructions are below. Open an issue the
+In-depth instructions are below. Open an issue in the
 GitHub repository for this project with any questions.
 
 
@@ -88,7 +88,7 @@ You will need the following:
         Okta user profile.
         
         You can do this from the Okta Admin UI using: Directory > Profile
-        Editor, the selecting the "User (default)" profile, then clicking
+        Editor, then selecting the "User (default)" profile, then clicking
         the "Add Attribute" button, then naming the variable `externalId`.
     -   Import the `Workflows_SCIM_Relay.folder` file into Okta
         Workflows. This will create a folder named "SCIM".
@@ -107,11 +107,11 @@ You will need the following:
         -   Change the bearer token to something unique.
 3.  Deploy the Cloudflare Functions code in this project to
     Cloudflare. This is a thin HTTP proxy that turns all HTTP requests
-    into HTTP POST reqeusts.
+    into HTTP POST requests.
     -   Edit the `wrangler.toml` file in this repository. Set the value
         of the `WORKFLOW_URL` variable to the "Invoke URL" as per above.
     -   Install the `wrangler` command.
-    -   Run `wrangler publish` to deploy the the Cloudflare Function.
+    -   Run `wrangler publish` to deploy the Cloudflare Function.
     -   Wrangler should give you a URL where the thin HTTP proxy has been
         deployed. Copy this URL, it should look like this:
         `https://workflows-scim-relay.example.workers.dev`
@@ -154,10 +154,10 @@ Okta Org via SCIM:
         curl -H $AUTH "https://workflows-scim-relay.example.workers.dev/scim/v2/Users?startIndex=1&count=1"
 2.  The Cloudflare Worker running at
     `workflows-scim-relay.example.workers.dev` would convert this HTTP GET
-    request into a single HTTP POST containing JSON that represets the
+    request into a single HTTP POST containing JSON that represents the
     GET request as a JSON payload that conforms to the [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request) and [URL](https://developer.mozilla.org/en-US/docs/Web/API/URL)
     objects of the "Fetch" Web API. Here is simplified version of what
-    the HTTP GET request above looks like when it's serialised into JSON
+    the HTTP GET request above looks like when it's serialized into JSON
     by the Cloudflare proxy:
     
         {
@@ -473,10 +473,10 @@ This should return a JSON payload containing this key:
 
 # Thanks
 
-Thanks to the following people for their explicit and implict help in
+Thanks to the following people for their explicit and implicit help in
 making this project a reality:
 
--   Aaron Berman for proposing the idea initally
+-   Aaron Berman for proposing the idea initially
 -   Melisa Chaidez for early feedback and suggestions
 -   Brian Zuzga for early feedback
 -   Brent Garlow for ongoing encouragement and assistance
